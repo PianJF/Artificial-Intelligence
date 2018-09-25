@@ -146,7 +146,6 @@ def uniformCostSearch(problem):
             for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
                 fringe.push((nextState, curActions + [nextAction], curCost + nextCost), curCost + nextCost)
 
-
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -159,6 +158,26 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    # Use priority queue to pop the combined minimum cost element
+    fringe = util.PriorityQueue()
+    expanded = set()
+    actions = []
+    cost = 0
+    totalCost = 0
+    fringe.push((problem.getStartState(), actions, cost), totalCost)
+
+    while not fringe.isEmpty():
+
+        curState, curActions, curCost = fringe.pop()
+        if problem.isGoalState(curState):
+            return curActions
+        if curState not in expanded:
+            expanded.add(curState)
+            for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
+                forwCost = heuristic(nextState, problem)    # forwCost is forwards cost h(n)
+                # combing g(n) and h(n) as total cost as priority of the item
+                fringe.push((nextState, curActions + [nextAction], curCost + nextCost), curCost + nextCost + forwCost)
+
     util.raiseNotDefined()
 
 
