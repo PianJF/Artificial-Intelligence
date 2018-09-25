@@ -96,14 +96,15 @@ def depthFirstSearch(problem):
     while not fringe.isEmpty():
 
         curState, curActions = fringe.pop()
-        if problem.isGoalState(curState):
-            return curActions
         if curState not in expanded:
+            if problem.isGoalState(curState):
+                return curActions
             expanded.add(curState)
             for nextState, nextAction, cost in problem.getSuccessors(curState):  # state, action, cost
                 fringe.push((nextState, curActions + [nextAction]))
 
     util.raiseNotDefined()
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -117,9 +118,9 @@ def breadthFirstSearch(problem):
     while not fringe.isEmpty():
 
         curState, curActions = fringe.pop()
-        if problem.isGoalState(curState):
-            return curActions
         if curState not in expanded:
+            if problem.isGoalState(curState):
+                return curActions
             expanded.add(curState)
             for nextState, nextAction, cost in problem.getSuccessors(curState):  # state, action, cost
                 fringe.push((nextState, curActions + [nextAction]))
@@ -139,9 +140,10 @@ def uniformCostSearch(problem):
     while not fringe.isEmpty():
 
         curState, curActions, curCost = fringe.pop()
-        if problem.isGoalState(curState):
-            return curActions
+
         if curState not in expanded:
+            if problem.isGoalState(curState):
+                return curActions
             expanded.add(curState)
             for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
                 fringe.push((nextState, curActions + [nextAction], curCost + nextCost), curCost + nextCost)
@@ -169,9 +171,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     while not fringe.isEmpty():
 
         curState, curActions, curCost = fringe.pop()
-        if problem.isGoalState(curState):
-            return curActions
         if curState not in expanded:
+            if problem.isGoalState(curState):
+                return curActions
             expanded.add(curState)
             for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
                 forwCost = heuristic(nextState, problem)    # forwCost is forwards cost h(n)
