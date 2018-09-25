@@ -129,6 +129,23 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    # Use priority queue to pop the minimum cost element
+    fringe = util.PriorityQueue()
+    expanded = set()
+    actions = []
+    cost = 0
+    fringe.push((problem.getStartState(), actions, cost), cost)
+
+    while not fringe.isEmpty():
+
+        curState, curActions, curCost = fringe.pop()
+        if problem.isGoalState(curState):
+            return curActions
+        if curState not in expanded:
+            expanded.add(curState)
+            for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
+                fringe.push((nextState, curActions + [nextAction], curCost + nextCost), curCost + nextCost)
+
 
     util.raiseNotDefined()
 
