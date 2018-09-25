@@ -87,7 +87,7 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-
+    # Use last in first out handle DFS
     fringe = util.Stack()
     expanded = set()
     actions = []
@@ -108,11 +108,28 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    # Use First in first out handle BFS
+    fringe = util.Queue()
+    expanded = set()
+    actions = []
+    fringe.push((problem.getStartState(), actions))
+
+    while not fringe.isEmpty():
+
+        curState, curActions = fringe.pop()
+        if problem.isGoalState(curState):
+            return curActions
+        if curState not in expanded:
+            expanded.add(curState)
+            for nextState, nextAction, cost in problem.getSuccessors(curState):  # state, action, cost
+                fringe.push((nextState, curActions + [nextAction]))
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
