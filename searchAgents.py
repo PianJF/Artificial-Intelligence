@@ -295,7 +295,8 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, ())
+        return self.startingPosition, ()
+
 
         util.raiseNotDefined()
 
@@ -304,16 +305,9 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        conVisted_list = []
-        curState, conVisted = state
-        conVisted_list = list(conVisted)
+        curPos, corVisted = state     # pacman position and corner visited
 
-        if curState in self.corners:
-            if curState not in conVisted:
-                conVisted_list.append(curState)
-                conVisted = tuple(conVisted_list)
-
-        isGoal = len(conVisted) == 4
+        isGoal = len(corVisted) == 4
 
         return isGoal
 
@@ -341,32 +335,33 @@ class CornersProblem(search.SearchProblem):
         #
         #     "*** YOUR CODE HERE ***"
 
-        conVisted_list = []
-        curState, conVisted = state
-        conVisted_list = list(conVisted)
+        curPos, corVisted = state     # pacman position and corner visited
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x, y = curState
+            x, y = curPos
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            nextState = (nextx, nexty)
-            cost = 1
             hitsWall = self.walls[nextx][nexty]
+            nextPos = (nextx, nexty)    # next position
+            cost = 1
 
             if not hitsWall:
-                if nextState in self.corners:
-                    if nextState not in conVisted_list:
-                        conVisted_list.append(nextState)
-                        conVisted = tuple(conVisted_list)
-                        successors.append(((nextState, conVisted), action, cost))
+                if nextPos in self.corners:
+                    if nextPos not in corVisted:
 
-                successors.append(((nextState, conVisted), action, cost))
+                        next_visited_list = list(corVisted)
+                        next_visited_list.append(nextPos)
+                        next_visited = tuple(next_visited_list)
+                        successors.append(((nextPos, next_visited), action, cost))
+
+                successors.append(((nextPos, corVisted), action, cost))
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
+
 
     def getCostOfActions(self, actions):
         """
@@ -399,6 +394,10 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+
+
+
+
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):

@@ -114,14 +114,16 @@ def breadthFirstSearch(problem):
     expanded = set()
     actions = []
     fringe.push((problem.getStartState(), actions))
+    print problem.getStartState()
 
     while not fringe.isEmpty():
 
         curState, curActions = fringe.pop()
+
         if curState not in expanded:
+            expanded.add(curState)
             if problem.isGoalState(curState):
                 return curActions
-            expanded.add(curState)
             for nextState, nextAction, cost in problem.getSuccessors(curState):  # state, action, cost
                 fringe.push((nextState, curActions + [nextAction]))
 
