@@ -140,13 +140,13 @@ def uniformCostSearch(problem):
 
     while not fringe.isEmpty():
 
-        curState, curActions, curCost = fringe.pop()        # current position, actions, cost
+        curPos, curActions, curCost = fringe.pop()        # current position, actions, cost
 
-        if curState not in expanded:
-            if problem.isGoalState(curState):
+        if curPos not in expanded:
+            if problem.isGoalState(curPos):
                 return curActions
-            expanded.add(curState)
-            for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
+            expanded.add(curPos)
+            for nextState, nextAction, nextCost in problem.getSuccessors(curPos):  # state, action, cost
                 fringe.push((nextState, curActions + [nextAction], curCost + nextCost), curCost + nextCost)
 
     util.raiseNotDefined()
