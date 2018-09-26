@@ -95,13 +95,13 @@ def depthFirstSearch(problem):
 
     while not fringe.isEmpty():
 
-        curState, curActions = fringe.pop()
-        if curState not in expanded:
-            if problem.isGoalState(curState):
+        curPos, curActions = fringe.pop()       # current position, actions
+        if curPos not in expanded:
+            if problem.isGoalState(curPos):
                 return curActions
-            expanded.add(curState)
-            for nextState, nextAction, cost in problem.getSuccessors(curState):  # state, action, cost
-                fringe.push((nextState, curActions + [nextAction]))
+            expanded.add(curPos)
+            for nextPos, nextAction, cost in problem.getSuccessors(curPos):  # state, action, cost
+                fringe.push((nextPos, curActions + [nextAction]))
 
     util.raiseNotDefined()
 
@@ -118,14 +118,14 @@ def breadthFirstSearch(problem):
 
     while not fringe.isEmpty():
 
-        curState, curActions = fringe.pop()
+        curPos, curActions = fringe.pop()       # current position, actions
 
-        if curState not in expanded:
-            expanded.add(curState)
-            if problem.isGoalState(curState):
+        if curPos not in expanded:
+            expanded.add(curPos)
+            if problem.isGoalState(curPos):
                 return curActions
-            for nextState, nextAction, cost in problem.getSuccessors(curState):  # state, action, cost
-                fringe.push((nextState, curActions + [nextAction]))
+            for nextPos, nextAction, cost in problem.getSuccessors(curPos):  # position, action, cost
+                fringe.push((nextPos, curActions + [nextAction]))
 
     util.raiseNotDefined()
 
@@ -141,7 +141,7 @@ def uniformCostSearch(problem):
 
     while not fringe.isEmpty():
 
-        curState, curActions, curCost = fringe.pop()
+        curState, curActions, curCost = fringe.pop()        # current position, actions, cost
 
         if curState not in expanded:
             if problem.isGoalState(curState):
@@ -172,15 +172,15 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while not fringe.isEmpty():
 
-        curState, curActions, curCost = fringe.pop()
-        if curState not in expanded:
-            if problem.isGoalState(curState):
+        curPos, curActions, curCost = fringe.pop()  # current position, actions, cost
+        if curPos not in expanded:
+            if problem.isGoalState(curPos):
                 return curActions
-            expanded.add(curState)
-            for nextState, nextAction, nextCost in problem.getSuccessors(curState):  # state, action, cost
-                forwCost = heuristic(nextState, problem)    # forwCost is forwards cost h(n)
+            expanded.add(curPos)
+            for nextPos, nextAction, nextCost in problem.getSuccessors(curPos):  # state, action, cost
+                forwCost = heuristic(nextPos, problem)    # forwCost is forwards cost h(n)
                 # combing g(n) and h(n) as total cost as priority of the item
-                fringe.push((nextState, curActions + [nextAction], curCost + nextCost), curCost + nextCost + forwCost)
+                fringe.push((nextPos, curActions + [nextAction], curCost + nextCost), curCost + nextCost + forwCost)
 
     util.raiseNotDefined()
 
