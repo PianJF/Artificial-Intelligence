@@ -114,7 +114,6 @@ def breadthFirstSearch(problem):
     expanded = set()
     actions = []
     fringe.push((problem.getStartState(), actions))
-    print problem.getStartState()
 
     while not fringe.isEmpty():
 
