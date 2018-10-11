@@ -47,6 +47,11 @@ class ReflexAgent(Agent):
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
+        # print(scores)
+        # print "best score", bestScore
+        #print "best indeices", bestIndices
+        #print "chosen Index", chosenIndex
+
         "Add more of your code here if you want to"
 
         return legalMoves[chosenIndex]
@@ -74,7 +79,34 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        curFood = currentGameState.getFood()
+        curFoodList = curFood.asList()
+        posInf = float("inf")        # Positive infinity
+        negInf = float("-inf")       # Negative infinity
+        score = 0
+        foodDis = posInf        # Distance to food, initialize as positive infinity
+
+        # Prevent pacman stay at same spot
+        if action == Directions.STOP:
+            score = negInf
+            return score
+
+        # Check if collision with ghost
+        for ghostState in newGhostStates:
+            if ghostState.getPosition() == newPos:
+                if ghostState.scaredTimer == 0:
+                    score = negInf
+                    return score
+
+        # Return the closest food pellet distance
+        for food in curFoodList:
+            temp = manhattanDistance(food, newPos)
+            if temp < foodDis:
+                foodDis = temp
+
+        # The closer the food gets higher score
+        score = 1/(foodDis + 0.0001)        # 0.0001 is in case of foodDis equal to 0
+        return score
 
 def scoreEvaluationFunction(currentGameState):
     """
