@@ -160,7 +160,60 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
+
+
+        def minimax(gamestate, agentIndex, plyIndex):
+
+            if gameState.isWin() or gameState.isLose():
+                return self.evaluationFunction
+
+            if agentIndex == gameState.getNumAgents():
+                if plyIndex == self.depth:
+                    return self.evaluationFunction
+                else:
+                    return minimax(gameState, self.index, plyIndex + 1)
+
+            if agentIndex == self.index:
+                return maxValue(gameState, agentIndex, plyIndex)
+            else:
+                return minValue(gameState, agentIndex, plyIndex)
+
+
+        def maxValue(gamestate, agentIndex, plyIndex):
+            value = float("-inf")
+            actionList = gameState.getLegalActions(agentIndex)
+            maxValueAction = ''
+            if len(actionList) == 0:
+                return self.evaluationFunction()
+
+            for action in actionList:
+                successor = gameState.generateSuccessor(agentIndex, action)
+                # get value from ghost's turn
+                tempValue = minimax(gameState, agentIndex + 1, plyIndex)
+                value = max(tempValue, value)
+                if plyIndex == 0:
+                    maxValueAction = action
+                    return maxValueAction
+            return value
+
+
+        def minValue(gamestate, agentIndex, plyIndex):
+            value = float("inf")
+            actionList = gameState.getLegalActions(agentIndex)
+            if len(actionList) == 0:
+                return self.evaluationFunction()
+
+            for action in actionList:
+                successor = gameState.generateSuccessor(agentIndex, action)
+                # Increase agent index, call ghost agent
+                tempValue = minimax(gameState, agentIndex + 1, plyIndex)
+                value = min(tempValue, value)
+
+            return value
+
+
         "*** YOUR CODE HERE ***"
+        return minimax(gameState, 0, 0)
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
