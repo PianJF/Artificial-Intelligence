@@ -47,11 +47,6 @@ class ReflexAgent(Agent):
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
-        # print(scores)
-        # print "best score", bestScore
-        #print "best indeices", bestIndices
-        #print "chosen Index", chosenIndex
-
         "Add more of your code here if you want to"
 
         return legalMoves[chosenIndex]
@@ -137,6 +132,7 @@ class MultiAgentSearchAgent(Agent):
         self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
+        self.plyIndex = 0   # initial ply index
 
 class MinimaxAgent(MultiAgentSearchAgent):
     """
@@ -161,60 +157,56 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
 
-
-        def minimax(gamestate, agentIndex, plyIndex):
-
-            if gameState.isWin() or gameState.isLose():
-                return self.evaluationFunction
-
-            if agentIndex == gameState.getNumAgents():
-                if plyIndex == self.depth:
-                    return self.evaluationFunction
-                else:
-                    return minimax(gameState, self.index, plyIndex + 1)
-
-            if agentIndex == self.index:
-                return maxValue(gameState, agentIndex, plyIndex)
-            else:
-                return minValue(gameState, agentIndex, plyIndex)
-
-
-        def maxValue(gamestate, agentIndex, plyIndex):
-            value = float("-inf")
-            actionList = gameState.getLegalActions(agentIndex)
-            maxValueAction = ''
-            if len(actionList) == 0:
-                return self.evaluationFunction()
-
-            for action in actionList:
-                successor = gameState.generateSuccessor(agentIndex, action)
-                # get value from ghost's turn
-                tempValue = minimax(gameState, agentIndex + 1, plyIndex)
-                value = max(tempValue, value)
-                if plyIndex == 0:
-                    maxValueAction = action
-                    return maxValueAction
-            return value
-
-
-        def minValue(gamestate, agentIndex, plyIndex):
-            value = float("inf")
-            actionList = gameState.getLegalActions(agentIndex)
-            if len(actionList) == 0:
-                return self.evaluationFunction()
-
-            for action in actionList:
-                successor = gameState.generateSuccessor(agentIndex, action)
-                # Increase agent index, call ghost agent
-                tempValue = minimax(gameState, agentIndex + 1, plyIndex)
-                value = min(tempValue, value)
-
-            return value
-
-
         "*** YOUR CODE HERE ***"
-        return minimax(gameState, 0, 0)
+        return self.minimax(gameState, self.index, self.plyIndex)
         util.raiseNotDefined()
+
+    def minimax(self, gs, agentIndex, plyIndex):      # gs game state
+
+        if gs.isWin() or gs.isLose():
+            return self.evaluationFunction(gs)
+
+        # Next ply or return evaluation score
+        if agentIndex == gs.getNumAgents():
+            agentIndex = self.index
+            plyIndex += 1
+            if plyIndex == self.depth:
+                return self.evaluationFunction(gs)
+
+        if agentIndex == self.index:
+            return self.maxValue(gs, agentIndex, plyIndex)
+        else:
+            return self.minValue(gs, agentIndex, plyIndex)
+
+    def maxValue(self, pgs, agentIndex, plyIndex):        # pgs pacman game state
+        value = float("-inf")
+        actionList = pgs.getLegalActions(agentIndex)
+        maxValueAction = ''
+
+        for action in actionList:
+            successor = pgs.generateSuccessor(agentIndex, action)
+            # get value from ghost's turn
+            tempValue = self.minimax(successor, agentIndex + 1, plyIndex)
+            if tempValue > value:
+                value = tempValue
+                maxValueAction = action
+
+        # return action if at the end of the recursive(agentIndex 0, plyIndex 0)
+        if plyIndex == 0:
+            return maxValueAction
+        return value
+
+    def minValue(self, ggs, agentIndex, plyIndex):        # ggs ghost game state
+        value = float("inf")
+        actionList = ggs.getLegalActions(agentIndex)
+
+        for action in actionList:
+            successor = ggs.generateSuccessor(agentIndex, action)
+            # Increase agent index, call next ghost agent
+            tempValue = self.minimax(successor, agentIndex + 1, plyIndex)
+            value = min(tempValue, value)
+
+        return value
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
