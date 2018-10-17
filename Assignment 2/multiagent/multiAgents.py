@@ -218,7 +218,64 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.alphaBeta(gameState, self.index, self.plyIndex, float("-inf"), float("inf"))
+        #util.raiseNotDefined()
+
+    def alphaBeta(self, gs, agentIndex, plyIndex, alpha, beta):      # gs game state
+
+        if gs.isWin() or gs.isLose():
+            return self.evaluationFunction(gs)
+
+        # Next ply or return evaluation score
+        if agentIndex == gs.getNumAgents():
+            agentIndex = self.index
+            plyIndex += 1
+            if plyIndex == self.depth:
+                return self.evaluationFunction(gs)
+
+        if agentIndex == self.index:
+            return self.maxValue(gs, agentIndex, plyIndex, alpha, beta)
+        else:
+            return self.minValue(gs, agentIndex, plyIndex, alpha, beta)
+
+    def maxValue(self, pgs, agentIndex, plyIndex, alpha, beta):        # pgs pacman game state
+        value = float("-inf")
+        actionList = pgs.getLegalActions(agentIndex)
+        maxValueAction = ''
+
+        for action in actionList:
+            successor = pgs.generateSuccessor(agentIndex, action)
+            # get value from ghost's turn
+            tempValue = self.alphaBeta(successor, agentIndex + 1, plyIndex, alpha, beta)
+            if tempValue > value:
+                value = tempValue
+                maxValueAction = action
+            # check if pruning
+            if value > beta:
+                return value
+
+            alpha = max(alpha, value)
+        # return action if at the end of the recursive(agentIndex 0, plyIndex 0)
+        if plyIndex == 0:
+            return maxValueAction
+        return value
+
+    def minValue(self, ggs, agentIndex, plyIndex, alpha, beta):        # ggs ghost game state
+        value = float("inf")
+        actionList = ggs.getLegalActions(agentIndex)
+
+        for action in actionList:
+            successor = ggs.generateSuccessor(agentIndex, action)
+            # Increase agent index, call next ghost agent
+            tempValue = self.alphaBeta(successor, agentIndex + 1, plyIndex, alpha, beta)
+            value = min(tempValue, value)
+            # check if pruning
+            if value < alpha:
+                return value
+
+            beta = min(beta, value)
+
+        return value
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
