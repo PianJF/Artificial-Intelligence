@@ -290,7 +290,56 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
+        return self.expectimax(gameState, self.index, self.plyIndex)
         util.raiseNotDefined()
+
+    def expectimax(self, gs, agentIndex, plyIndex):      # gs game state
+
+        if gs.isWin() or gs.isLose():
+            return self.evaluationFunction(gs)
+
+        # Next ply or return evaluation score
+        if agentIndex == gs.getNumAgents():
+            agentIndex = self.index
+            plyIndex += 1
+            if plyIndex == self.depth:
+                return self.evaluationFunction(gs)
+
+        if agentIndex == self.index:
+            return self.maxValue(gs, agentIndex, plyIndex)
+        else:
+            return self.expectValue(gs, agentIndex, plyIndex)
+
+    def maxValue(self, pgs, agentIndex, plyIndex):        # pgs pacman game state
+        value = float("-inf")
+        actionList = pgs.getLegalActions(agentIndex)
+        maxValueAction = ''
+
+        for action in actionList:
+            successor = pgs.generateSuccessor(agentIndex, action)
+            # get value from ghost's turn
+            tempValue = self.expectimax(successor, agentIndex + 1, plyIndex)
+            if tempValue > value:
+                value = tempValue
+                maxValueAction = action
+
+        # return action if at the end of the recursive(agentIndex 0, plyIndex 0)
+        if plyIndex == 0:
+            return maxValueAction
+        return value
+
+    def expectValue(self, ggs, agentIndex, plyIndex):        # ggs ghost game state
+        value = 0       # set initial value to 0
+        actionList = ggs.getLegalActions(agentIndex)
+        probability = 1.0/len(actionList)       # probability of each value
+
+        for action in actionList:
+            successor = ggs.generateSuccessor(agentIndex, action)
+            # Increase agent index, call next ghost agent
+            curValue = self.expectimax(successor, agentIndex + 1, plyIndex)    # current ghost picked value
+            value += probability * curValue
+
+        return value
 
 def betterEvaluationFunction(currentGameState):
     """
