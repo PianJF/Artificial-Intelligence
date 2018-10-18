@@ -86,7 +86,7 @@ class ReflexAgent(Agent):
             score = negInf
             return score
 
-        # Check if collision with ghost
+        # Check if collision with ghost when they not scared
         for ghostState in newGhostStates:
             if ghostState.getPosition() == newPos:
                 if ghostState.scaredTimer == 0:
@@ -347,8 +347,41 @@ def betterEvaluationFunction(currentGameState):
       evaluation function (question 5).
 
       DESCRIPTION: <write something here so we know what you did>
+      I found when I only consider the distance to food and penalty for stop, pacman gives the maximum average score.(
+      not really make sense)
+      When I try to weight number of food left or distance to ghost, etc. The average score goes down a bit, so I just 
+      leave it with food distance and not stop.
     """
     "*** YOUR CODE HERE ***"
+    curPos = currentGameState.getPacmanPosition()
+    curFood = currentGameState.getFood()
+    curFoodList = curFood.asList()
+    # curFoodNum = len(curFoodList)
+    curScore = currentGameState.getScore()
+    ghostStates = currentGameState.getGhostStates()
+    posInf = float("inf")  # Positive infinity
+    negInf = float("-inf")  # Negative infinity
+    foodDis = posInf  # Distance to food, initialize as positive infinity
+    # ghostSumDis = 0
+    score = 0
+
+    # Check if collision with ghost when they not scared
+    for ghostState in ghostStates:
+        if ghostState.getPosition() == curPos:
+            if ghostState.scaredTimer == 0:
+                score = negInf
+                return score
+        # ghostSumDis += manhattanDistance(ghostState.getPosition(), curPos)
+
+    # Return the closest food pellet distance
+    for food in curFoodList:
+        temp = manhattanDistance(food, curPos)
+        if temp < foodDis:
+            foodDis = temp
+
+    # give some weight to food to distance and huge weight on not stopping
+    score = 10 * 1 / (foodDis + 0.0001) + curScore * 5
+    return score
     util.raiseNotDefined()
 
 # Abbreviation
