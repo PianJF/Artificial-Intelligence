@@ -25,6 +25,7 @@ def question2():
     return answerDiscount, answerNoise
 
 def question3a():
+    # high living cost, less browsing
     answerDiscount = 0.75
     answerNoise = 0.2
     answerLivingReward = - 1.2
@@ -32,6 +33,7 @@ def question3a():
     # If not possible, return 'NOT POSSIBLE'
 
 def question3b():
+    # high discount for pick short reward, less browsing and living cost to avoid cliff
     answerDiscount = 0.3
     answerNoise = 0.2
     answerLivingReward = - 0.001
@@ -39,6 +41,7 @@ def question3b():
     # If not possible, return 'NOT POSSIBLE'
 
 def question3c():
+    # less browsing for pick high value and less discounted reward, no hurry
     answerDiscount = 0.75
     answerNoise = 0.01
     answerLivingReward = - 0.001
@@ -46,6 +49,7 @@ def question3c():
     # If not possible, return 'NOT POSSIBLE'
 
 def question3d():
+    # high living cost and less browsing to avoid cliff, less discount for high value
     answerDiscount = 0.75
     answerNoise = 0.2
     answerLivingReward = - 0.2
@@ -53,6 +57,7 @@ def question3d():
     # If not possible, return 'NOT POSSIBLE'
 
 def question3e():
+    # I got all day long to do noting but well paid as long as not risk to kill myself
     answerDiscount = 0.99
     answerNoise = 0.002
     answerLivingReward = 5
